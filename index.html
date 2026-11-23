@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <title>El Primer Amor</title>
+    <meta name="description" content="Un juego de latidos sobre el primer amor: acércate sin que tu corazón explote." />
+    <meta name="theme-color" content="#ffc9dd" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <canvas id="game" aria-label="Escena del juego"></canvas>
+
+    <div id="ui">
+      <!-- HUD -->
+      <div id="hud">
+        <button id="btn-pause" class="icon-btn" aria-label="Pausa">❚❚</button>
+      </div>
+
+      <!-- Menú -->
+      <section id="s-menu" class="screen">
+        <div class="title-wrap">
+          <div class="eyebrow">un juego de latidos</div>
+          <h1>El Primer <span>Amor</span></h1>
+          <p id="menu-for" class="for-name"></p>
+        </div>
+        <div class="menu-buttons">
+          <button class="btn primary" data-action="story">Historia</button>
+          <button class="btn" data-action="endless">Mariposas en el estómago</button>
+          <button class="btn" data-action="diary">Diario de recuerdos</button>
+          <button class="btn ghost" data-action="setup">Personajes</button>
+        </div>
+        <div class="menu-foot">
+          <button id="btn-sound" class="icon-btn" aria-label="Sonido">🔊</button>
+          <button id="btn-vibe" class="icon-btn" aria-label="Vibración">📳</button>
+          <span id="menu-stats"></span>
+        </div>
+      </section>
+
+      <!-- Personajes -->
+      <section id="s-setup" class="screen dim">
+        <div class="card">
+          <h2>¿Quién fue tu primer amor?</h2>
+          <p class="muted">Su nombre aparecerá en la historia. Puedes dejarlo en blanco.</p>
+          <div class="inputs">
+            <label>Su nombre<input id="in-crush" maxlength="16" autocomplete="off" placeholder="p. ej. Alex" /></label>
+            <label>Tu nombre<input id="in-me" maxlength="16" autocomplete="off" placeholder="p. ej. Sam" /></label>
+          </div>
+          <div class="pickers">
+            <div class="picker" data-who="me">
+              <canvas width="150" height="190"></canvas>
+              <div class="pick-label">Tú</div>
+              <div class="rows"></div>
+            </div>
+            <div class="picker" data-who="crush">
+              <canvas width="150" height="190"></canvas>
+              <div class="pick-label" id="crush-label">Tu amor</div>
+              <div class="rows"></div>
+            </div>
+          </div>
+          <button class="btn primary" id="setup-done">Listo ♥</button>
+        </div>
+      </section>
+
+      <!-- Capítulos -->
+      <section id="s-chapters" class="screen dim">
+        <div class="card wide">
+          <div class="card-head">
+            <button class="icon-btn back" data-action="menu" aria-label="Volver">←</button>
+            <h2>Capítulos</h2>
+            <span class="pill" id="stars-total"></span>
+          </div>
+          <div id="chapter-grid" class="chapter-grid"></div>
+        </div>
+      </section>
+
+      <!-- Intro de capítulo -->
+      <section id="s-intro" class="screen dim">
+        <div class="card intro-card">
+          <div class="chap-num" id="intro-num"></div>
+          <h2 id="intro-title"></h2>
+          <p class="story" id="intro-story"></p>
+          <div class="hint" id="intro-hint"></div>
+          <div class="goals" id="intro-goals"></div>
+          <div class="row">
+            <button class="btn ghost small" data-action="chapters">Volver</button>
+            <button class="btn primary" id="intro-start">Empezar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pausa -->
+      <section id="s-pause" class="screen dim">
+        <div class="card">
+          <h2>Pausa</h2>
+          <p class="muted">Respira hondo… ♥</p>
+          <div class="col">
+            <button class="btn primary" data-action="resume">Continuar</button>
+            <button class="btn" data-action="retry">Reintentar</button>
+            <button class="btn ghost" data-action="quit">Salir</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Resultado -->
+      <section id="s-result" class="screen dim">
+        <div class="card result-card">
+          <h2 id="res-title"></h2>
+          <p class="story" id="res-sub"></p>
+          <div class="stars" id="res-stars"></div>
+          <div class="stats" id="res-stats"></div>
+          <div class="words" id="res-words"></div>
+          <div class="col">
+            <button class="btn primary" id="res-next">Siguiente</button>
+            <button class="btn" id="res-retry">Reintentar</button>
+            <button class="btn ghost" id="res-back">Capítulos</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Carta -->
+      <section id="s-letter" class="screen dim">
+        <div class="letter">
+          <div class="letter-paper" id="letter-body"></div>
+          <div class="row">
+            <button class="btn ghost small" id="letter-back">Volver</button>
+            <button class="btn primary small" id="letter-copy">Copiar carta</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Diario -->
+      <section id="s-diary" class="screen dim">
+        <div class="card wide">
+          <div class="card-head">
+            <button class="icon-btn back" data-action="menu" aria-label="Volver">←</button>
+            <h2>Diario de recuerdos</h2>
+            <span></span>
+          </div>
+          <div id="polaroids" class="polaroids"></div>
+          <button class="btn primary" id="diary-letter"></button>
+          <h3>Logros</h3>
+          <div id="achievements" class="achievements"></div>
+          <button class="btn ghost small danger" id="btn-reset">Borrar progreso</button>
+        </div>
+      </section>
+
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
